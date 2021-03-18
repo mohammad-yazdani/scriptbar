@@ -10,16 +10,34 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:scriptbar.helloWorld"
+    "onCommand:scriptbar.selectScript"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "scriptbar.helloWorld",
-        "title": "Hello World"
+        "command": "scriptbar.selectScript",
+        "title": "ScriptBar"
       }
-    ]
+    ],
+    "menus": {
+      "touchBar": [
+          {
+              "command": "scriptbar.selectScript",
+              "group": "editing"
+          }
+      ]
+    },
+    "configuration": {
+      "title": "ScriptBar",
+      "properties": {
+        "scriptbar.config": {
+          "type": ["string"],
+          "default": ".vscode/scripts.json",
+          "description": ""
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

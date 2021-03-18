@@ -13,15 +13,51 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('scriptbar.helloWorld', () => {
+	let disposable = vscode.commands.registerCommand('scriptbar.selectScript', () => {
 		// The code you place here will be executed every time your command is executed
+		let items: vscode.QuickPickItem[] = [];
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from scriptbar!');
+		const testFolders = vscode.workspace.workspaceFolders?.map(folder => folder.uri.path);
+		if (testFolders === undefined) {
+			console.log("huh");
+		} else {
+			const testFolder = testFolders[0];
+			const fs = require('fs');
+
+			const scriptConfig = testFolder + "/.vscode/scripts.json";
+			let rawdata = fs.readFileSync(scriptConfig);
+			let scripts = JSON.parse(rawdata)["scripts"];
+
+			scripts.forEach((script: any, index: any) => {
+				// let message = JSON.stringify(script);
+				let title = script.title;
+				let command = script.command;
+				items.push({
+					label: title,
+					description: command
+				});
+			});
+
+			vscode.window.showQuickPick(items).then(selection => {
+				// the user canceled the selection
+				if (!selection) {
+					return;
+				}
+				let command = selection.description ? selection.description : "echo Nothing to do :/";
+				const cp = require('child_process');
+				cp.exec(command, (err: string, stdout: string, stderr: string) => {
+					vscode.window.showInformationMessage('stdout: ' + stdout);
+					vscode.window.showInformationMessage('stderr: ' + stderr);
+					if (err) {
+						vscode.window.showInformationMessage('error: ' + err);
+					}
+				});
+			});
+		}
 	});
 
 	context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
