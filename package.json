@@ -3,6 +3,7 @@
   "displayName": "scriptbar",
   "description": "Run scripts from touchbar!",
   "version": "0.0.1",
+  "publisher": "mohammadyazdani",
   "engines": {
     "vscode": "^1.54.0"
   },
